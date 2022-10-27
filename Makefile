@@ -9,7 +9,6 @@ PROJECT_NAME = `basename $(PWD)`
 .DEFAULT_GOAL = help
 
 PATH_PYTHON=./app_python
-PATH_PHP=./app_php
 
 ## Prints this help.
 help:
@@ -32,10 +31,10 @@ local-setup:
 ## Make Python Class
 python-compiler:
 	python -m grpc_tools.protoc \
-	--proto_path=${PWD} \
+	--proto_path="${PWD}" \
 	--python_out=${PATH_PYTHON} \
 	--grpc_python_out=${PATH_PYTHON} \
-	${PWD}/proto/calculations.proto
+	"${PWD}"/proto/calcs.proto
 
 ## Make Python Class
 python-server:

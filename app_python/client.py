@@ -1,37 +1,38 @@
 import grpc
-
-from proto import calculations_pb2_grpc
-from proto import calculations_pb2
+import time
+from proto import calcs_pb2_grpc
+from proto import calcs_pb2
 
 HOST = 'localhost'
 PORT = '50051'
 
 
-def get_roots_equation_by_bhaskara(stub, value_a, value_b, value_c):
-    request = calculations_pb2.BhaskaraRequest(value_a=value_a, value_b=value_b, value_c=value_c)
-
-    response = stub.GetRootsEquationByBhaskara(request)
-
-    print(f"The roots of the equation are: ({response.x1}) and ({response.x2})")
+def get_bhaskara(stub, a, b, c):
+    request = calcs_pb2.BhaskaraRequest(var_a=a, var_b=b, var_c=c)
+    response = stub.GetBhaskara(request)
+    print(f"client roots: ({response.x1}) and ({response.x2})")
 
 
-def get_fibonacci_sequence(stub, limit, delay):
-    request = calculations_pb2.FibonacciSequenceRequest(limit=limit, delay=delay)
-
-    responses = stub.GetFibonacciSequence(request)
-
+def get_fibonacci(stub, limit, delay):
+    request = calcs_pb2.FibonacciRequest(limit=limit, delay=delay)
+    responses = stub.GetFibonacci(request)
     count = 1
     for response in responses:
-        print(f"The {count}º fibonacci number: {response.value}")
+        print(f"{count}º client fibonacci number: {response.value} - {time.time()}")
         count += 1
 
 
 if __name__ == "__main__":
     with grpc.insecure_channel('{}:{}'.format(HOST, PORT)) as channel:
-        stub = calculations_pb2_grpc.CalculationsStub(channel)
+        stub = calcs_pb2_grpc.CalcsStub(channel)
 
-        print("-------------- get_roots_equation_by_bhaskara --------------")
-        get_roots_equation_by_bhaskara(stub, 1, -1, -12)
+        print("\n=== client bhaskara")
+        a = 1
+        b = -1
+        c = -12
+        get_bhaskara(stub, a, b, c)
 
-        print("-------------- get_fibonacci_sequence --------------")
-        get_fibonacci_sequence(stub, 20, 1)
+        print("\n=== client fibonacci")
+        limit = 8
+        delay = 1
+        get_fibonacci(stub, limit, delay)
