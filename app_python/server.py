@@ -6,7 +6,7 @@ from proto import calcs_pb2_grpc
 from proto import calcs_pb2
 
 
-class CalcsServicer(calcs_pb2_grpc.CalcsServicer):
+class LocalCalcsServicer(calcs_pb2_grpc.CalcsServicer):
 
     def GetBhaskara(self, request, context):
         print("\n=== server bhaskara")
@@ -29,6 +29,12 @@ class CalcsServicer(calcs_pb2_grpc.CalcsServicer):
     def GetFibonacci(self, request, context):
         print("\n=== server fibonacci")
 
+        # metadata = context.invocation_metadata()
+        # metadata_dict = {}
+        # for c in metadata:
+        #     metadata_dict[c.key] = c.value
+        # print(metadata_dict)
+
         if request.limit == 0:
             print(f"1º server fibonacci number: 0")
             yield calcs_pb2.FibonacciReply(value=0)
@@ -46,18 +52,18 @@ class CalcsServicer(calcs_pb2_grpc.CalcsServicer):
                 time.sleep(request.delay)
 
 
-def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+def start_local_serve():
+    local_server = grpc.server(futures.ThreadPoolExecutor())
 
-    calcs_pb2_grpc.add_CalcsServicer_to_server(CalcsServicer(), server)
+    calcs_pb2_grpc.add_CalcsServicer_to_server(LocalCalcsServicer(), local_server)
 
-    server.add_insecure_port('[::]:' + '50051')
-    server.start()
+    local_server.add_insecure_port('[::]:' + '50051')
+    local_server.start()
 
     print("Server started, listening on " + '50051')
 
-    server.wait_for_termination()
+    local_server.wait_for_termination()
 
 
 if __name__ == '__main__':
-    serve()
+    start_local_serve()

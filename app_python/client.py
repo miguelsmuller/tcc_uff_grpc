@@ -14,6 +14,11 @@ def get_bhaskara(stub, a, b, c):
 
 
 def get_fibonacci(stub, limit, delay):
+    # timeout_seconds = 999
+    # metadata = [(b'key1', b'value1'), (b'key2', b'value2')]
+    # request = calcs_pb2.FibonacciRequest(limit=limit, delay=delay)
+    # responses = stub.GetFibonacci(request, timeout_seconds, metadata=metadata)
+
     request = calcs_pb2.FibonacciRequest(limit=limit, delay=delay)
     responses = stub.GetFibonacci(request)
     count = 1
